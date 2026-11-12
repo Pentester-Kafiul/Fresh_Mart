@@ -1,0 +1,117 @@
+<%- include('partials/navbar', { cartCount }) %>
+
+<section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-1">Shopping Cart</h1>
+  <p class="text-gray-500 mb-8"><%= cart.length %> item<%= cart.length !== 1 ? 's' : '' %> in your cart</p>
+
+  <% if (cart.length === 0) { %>
+    <div class="py-24 text-center">
+      <div class="mx-auto mb-5 flex h-28 w-28 items-center justify-center rounded-full bg-gray-100">
+        <i class="fas fa-shopping-bag text-5xl text-gray-300"></i>
+      </div>
+      <h2 class="text-xl font-bold text-gray-900">Your cart is empty</h2>
+      <p class="text-gray-500 mt-2 max-w-sm mx-auto">Looks like you haven't added anything yet. Start exploring our fresh products!</p>
+      <a href="/shop" class="inline-flex items-center gap-2 mt-8 rounded-xl btn-primary text-white font-semibold px-8 py-3.5 shadow-lg shadow-brand-500/25">
+        <i class="fas fa-shopping-bag text-sm"></i> Start Shopping
+      </a>
+    </div>
+  <% } else { %>
+    <div class="space-y-3">
+      <% cart.forEach(item => { %>
+        <div class="flex items-center gap-3 sm:gap-4 rounded-2xl border border-gray-100 bg-white p-3 sm:p-4 hover:shadow-md transition-shadow">
+          <!-- Product Image -->
+          <a href="/product/<%= item.productId %>" class="h-16 w-16 sm:h-20 sm:w-20 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center flex-shrink-0 text-3xl">
+            <%= getProductEmoji(item.name) %>
+          </a>
+
+          <!-- Product Info -->
+          <div class="flex-1 min-w-0">
+            <a href="/product/<%= item.productId %>" class="font-semibold text-gray-900 hover:text-brand-700 transition block truncate text-sm sm:text-base"><%= item.name %></a>
+            <p class="text-sm text-gray-400 mt-0.5">$<%= item.price.toFixed(2) %> per <%= item.unit %></p>
+          </div>
+
+          <!-- Quantity Controls -->
+          <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
+            <% if (item.quantity > 1) { %>
+              <form action="/cart/update/<%= item.productId %>" method="POST">
+                <input type="hidden" name="quantity" value="<%= item.quantity - 1 %>">
+                <button type="submit" class="h-9 w-9 flex items-center justify-center text-gray-500 hover:bg-white hover:text-brand-600 transition" title="Decrease">
+                  <i class="fas fa-minus text-xs"></i>
+                </button>
+              </form>
+            <% } else { %>
+              <form action="/cart/update/<%= item.productId %>" method="POST">
+                <input type="hidden" name="quantity" value="0">
+                <button type="submit" class="h-9 w-9 flex items-center justify-center text-gray-300 cursor-not-allowed" title="Remove" disabled>
+                  <i class="fas fa-minus text-xs"></i>
+                </button>
+              </form>
+            <% } %>
+            <span class="w-10 h-9 flex items-center justify-center text-sm font-bold bg-white border-x border-gray-200"><%= item.quantity %></span>
+            <form action="/cart/update/<%= item.productId %>" method="POST">
+              <input type="hidden" name="quantity" value="<%= item.quantity + 1 %>">
+              <button type="submit" class="h-9 w-9 flex items-center justify-center text-gray-500 hover:bg-white hover:text-brand-600 transition" title="Increase">
+                <i class="fas fa-plus text-xs"></i>
+              </button>
+            </form>
+          </div>
+
+          <!-- Price + Remove -->
+          <div class="text-right flex-shrink-0 flex items-center gap-2 sm:gap-3">
+            <p class="font-bold text-gray-900 w-20 sm:w-24 text-right text-sm sm:text-base">$<%= (item.price * item.quantity).toFixed(2) %></p>
+            <form action="/cart/remove/<%= item.productId %>" method="POST">
+              <button type="submit" class="h-9 w-9 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition" title="Remove">
+                <i class="fas fa-trash-can text-sm"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <!-- Summary -->
+    <div class="mt-8 rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 shadow-sm">
+      <h2 class="text-lg font-bold text-gray-900 mb-5">Order Summary</h2>
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between">
+          <span class="text-gray-500">Subtotal (<%= cartCount %> items)</span>
+          <span class="font-semibold text-gray-900">$<%= total.toFixed(2) %></span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Delivery</span>
+          <span class="font-semibold <%= total > 50 ? 'text-brand-600' : 'text-gray-900' %>">
+            <%= total > 50 ? 'FREE' : '$4.99' %>
+          </span>
+        </div>
+        <% if (total > 50) { %>
+          <div class="flex items-center gap-2 bg-brand-50 border border-brand-100 rounded-xl px-3 py-2.5 text-xs text-brand-700 font-medium">
+            <i class="fas fa-truck"></i> You've qualified for free delivery!
+          </div>
+        <% } else { %>
+          <div class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5 text-xs text-amber-700 font-medium">
+            <i class="fas fa-info-circle"></i> Add $<%= (50 - total).toFixed(2) %> more for free delivery
+          </div>
+        <% } %>
+        <div class="border-t border-gray-100 pt-4 flex justify-between">
+          <span class="font-bold text-gray-900 text-base">Total</span>
+          <span class="font-extrabold text-brand-700 text-xl">$<%= (total + (total > 50 ? 0 : 4.99)).toFixed(2) %></span>
+        </div>
+      </div>
+      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <a href="/checkout" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl btn-primary text-white font-bold py-4 shadow-lg shadow-brand-500/25">
+          Proceed to Checkout <i class="fas fa-arrow-right text-sm"></i>
+        </a>
+        <a href="/shop" class="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 text-gray-600 font-medium px-6 py-4 hover:bg-gray-50 transition">
+          <i class="fas fa-arrow-left text-sm"></i> Continue Shopping
+        </a>
+      </div>
+      <form action="/cart/clear" method="POST" class="mt-4 text-center">
+        <button type="submit" onclick="return confirm('Clear all items from your cart?')" class="text-sm text-gray-400 hover:text-red-500 transition font-medium">
+          <i class="fas fa-trash-can mr-1 text-xs"></i> Clear Cart
+        </button>
+      </form>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

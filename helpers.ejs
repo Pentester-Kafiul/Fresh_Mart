@@ -1,0 +1,50 @@
+<%
+// Product emoji & gradient mapping
+const productEmoji = {
+  'organic-bananas': '🍌', 'red-apples': '🍎', 'fresh-spinach': '🥬', 'tomatoes': '🍅',
+  'avocados': '🥑', 'carrots': '🥕', 'whole-milk': '🥛', 'free-range-eggs': '🥚',
+  'greek-yogurt': '🫙', 'cheddar-cheese': '🧀', 'sourdough-bread': '🍞', 'croissants': '🥐',
+  'chocolate-muffins': '🧁', 'orange-juice': '🍊', 'coffee-beans': '☕', 'green-tea': '🍵',
+  'sparkling-water': '💧', 'mixed-nuts': '🥜', 'potato-chips': '🥔', 'dark-chocolate': '🍫',
+  'chicken-breast': '🍗', 'salmon-fillet': '🐟', 'bacon': '🥓',
+  'dish-soap': '🧴', 'paper-towels': '🧻', 'all-purpose-cleaner': '🧹',
+  'hand-soap': '🧼', 'shampoo': '🧴', 'toothpaste': '🪥', 'body-lotion': '💆'
+};
+
+const categoryEmoji = {
+  'fruits-vegetables': '🥬', 'dairy-eggs': '🥚', 'bakery': '🍞', 'beverages': '🧃',
+  'snacks': '🍿', 'meat-fish': '🥩', 'household': '🧹', 'personal-care': '🧴'
+};
+
+const categoryGradients = {
+  'fruits-vegetables': 'from-emerald-400 via-green-500 to-teal-500',
+  'dairy-eggs': 'from-sky-300 via-blue-400 to-indigo-400',
+  'bakery': 'from-amber-300 via-orange-400 to-yellow-400',
+  'beverages': 'from-violet-400 via-purple-500 to-fuchsia-500',
+  'snacks': 'from-orange-300 via-amber-400 to-red-400',
+  'meat-fish': 'from-red-400 via-rose-500 to-pink-500',
+  'household': 'from-teal-300 via-cyan-400 to-sky-400',
+  'personal-care': 'from-pink-300 via-rose-400 to-fuchsia-400'
+};
+
+const categoryBgColors = {
+  'fruits-vegetables': '#10b981', 'dairy-eggs': '#3b82f6', 'bakery': '#f59e0b',
+  'beverages': '#8b5cf6', 'snacks': '#f97316', 'meat-fish': '#ef4444',
+  'household': '#06b6d4', 'personal-care': '#ec4899'
+};
+
+function getProductEmoji(name) {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return productEmoji[slug] || '🛒';
+}
+
+function getCategoryEmoji(name) {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return categoryEmoji[slug] || '📦';
+}
+
+function getCategoryGradient(name) {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return categoryGradients[slug] || 'from-gray-300 via-gray-400 to-gray-500';
+}
+%>
